@@ -3,8 +3,7 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { fireworks } from '@ai-sdk/fireworks';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { isTestEnvironment } from '../constants';
 import {
   artifactModel,
@@ -13,6 +12,14 @@ import {
   titleModel,
 } from './models.test';
 
+// Create an instance of OpenRouter using your API key.
+const openrouterInstance = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY || '',
+});
+
+// For test environment, use your test models.
+// In production, use OpenRouter for language models.
+// Note: The image models section is removed because OpenRouter does not support them by default.
 export const myProvider = isTestEnvironment
   ? customProvider({
       languageModels: {
@@ -25,17 +32,13 @@ export const myProvider = isTestEnvironment
     })
   : customProvider({
       languageModels: {
-        'chat-model-small': openai('gpt-4o-mini'),
-        'chat-model-large': openai('gpt-4o'),
+        'chat-model-small': openrouterInstance('gpt-4o-mini'),
+        'chat-model-large': openrouterInstance('gpt-4o'),
         'chat-model-reasoning': wrapLanguageModel({
-          model: fireworks('accounts/fireworks/models/deepseek-r1'),
+          model: openrouterInstance('gpt-4o-reasoning'),
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
-        'title-model': openai('gpt-4-turbo'),
-        'artifact-model': openai('gpt-4o-mini'),
-      },
-      imageModels: {
-        'small-model': openai.image('dall-e-2'),
-        'large-model': openai.image('dall-e-3'),
+        'title-model': openrouterInstance('gpt-4-turbo'),
+        'artifact-model': openrouterInstance('gpt-4o-mini'),
       },
     });
