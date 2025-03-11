@@ -2,6 +2,7 @@ import { smoothStream, streamText } from 'ai';
 import { myProvider } from '@/lib/ai/providers';
 import { createDocumentHandler } from '@/lib/artifacts/server';
 import { updateDocumentPrompt } from '@/lib/ai/prompts';
+import { openrouter } from '@openrouter/ai-sdk-provider';
 
 export const textDocumentHandler = createDocumentHandler<'text'>({
   kind: 'text',
@@ -42,7 +43,7 @@ export const textDocumentHandler = createDocumentHandler<'text'>({
       experimental_transform: smoothStream({ chunking: 'word' }),
       prompt: description,
       experimental_providerMetadata: {
-        openai: {
+        openrouter: {
           prediction: {
             type: 'content',
             content: document.content,
