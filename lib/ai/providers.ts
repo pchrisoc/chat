@@ -16,6 +16,7 @@ import {
 const openrouterInstance = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY || '',
 });
+console.log('OPENROUTER_API_KEY:', process.env.OPENROUTER_API_KEY);
 
 // For test environment, use your test models.
 // In production, use OpenRouter for language models.
